@@ -1,0 +1,4 @@
+# Vercel and local python cache
+.vercel/
+__pycache__/
+*.pyc
