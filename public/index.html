@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KPL Catalog Search</title>
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #090d16;
+    color: #e2e8f0;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+}
+
+.header {
+    padding: 60px 32px 24px;
+    max-width: 1320px;
+    margin: auto;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    color: #f8fafc;
+}
+
+.header p {
+    margin-top: 8px;
+    color: #94a3b8;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.search-panel {
+    max-width: 1320px;
+    margin: 0 auto 32px;
+    padding: 0 32px;
+}
+
+.search-box {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.search-box input {
+    flex: 1;
+    min-width: 280px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid #1e293b;
+    background: #0f172a;
+    color: #f8fafc;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.search-box input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+select {
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid #1e293b;
+    background: #0f172a;
+    color: #f8fafc;
+    font-size: 14px;
+    outline: none;
+    cursor: pointer;
+}
+
+select:focus {
+    border-color: #3b82f6;
+}
+
+button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: #ffffff;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+.container {
+    max-width: 1320px;
+    margin: auto;
+    padding: 0 32px 64px;
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    color: #64748b;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.15s ease;
+}
+
+.card:hover {
+    border-color: #334155;
+}
+
+.card-top {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+}
+
+.cover {
+    width: 80px;
+    height: 115px;
+    object-fit: cover;
+    border-radius: 6px;
+    background: #1e293b;
+    flex-shrink: 0;
+}
+
+.no-cover {
+    width: 80px;
+    height: 115px;
+    border-radius: 6px;
+    background: #1e293b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #64748b;
+    font-size: 11px;
+    padding: 4px;
+}
+
+.card-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.card h2 {
+    margin: 0 0 6px;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: #f8fafc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.meta {
+    color: #64748b;
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+.badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    background: #1e293b;
+    color: #94a3b8;
+    letter-spacing: 0.2px;
+}
+
+.description {
+    color: #94a3b8;
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 0 20px 16px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.availability {
+    border-top: 1px solid #1e293b;
+    padding: 16px 20px;
+    background: rgba(15, 23, 42, 0.4);
+    margin-top: auto;
+}
+
+.availability-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    color: #64748b;
+}
+
+.location {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    font-size: 12px;
+}
+
+.location-name {
+    color: #cbd5e1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.status {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.available {
+    background: rgba(16, 185, 129, 0.1);
+    color: #34d399;
+}
+
+.unavailable {
+    background: rgba(245, 158, 11, 0.1);
+    color: #fbbf24;
+}
+
+.unknown {
+    background: rgba(100, 116, 139, 0.1);
+    color: #94a3b8;
+}
+
+.message {
+    text-align: center;
+    padding: 64px 20px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #1e293b;
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin: auto auto 12px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@media(max-width: 600px) {
+    .container, .search-panel, .header { padding-left: 16px; padding-right: 16px; }
+    .grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+    <h1>Kitchener Public Library Catalog</h1>
+    <p>Enterprise search interface with automated query parsing and multi-branch indexing.</p>
+</header>
+
+<section class="search-panel">
+    <div class="search-box">
+        <input id="searchInput" type="text" placeholder="Search catalog (e.g., Astro Bot PS5, Dune, etc.)">
+        <select id="category">
+            <option value="All">All Categories</option>
+            <option value="Book">Books</option>
+            <option value="Video Game">Video Games</option>
+            <option value="Movie / DVD">Movies / DVDs</option>
+            <option value="Music">Music</option>
+            <option value="Audiobook">Audiobooks</option>
+            <option value="Other">Other</option>
+        </select>
+        <button onclick="search()">Search</button>
+    </div>
+</section>
+
+<main class="container">
+    <div id="resultsHeader" class="results-header"></div>
+    <div id="results" class="grid"></div>
+</main>
+
+<script>
+function escapeHTML(value) {
+    if (value === null || value === undefined) return "";
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function statusClass(status) {
+    const value = String(status).toLowerCase();
+    if (value === "available") return "available";
+    if (value.includes("checked") || value.includes("unavailable")) return "unavailable";
+    return "unknown";
+}
+
+function renderResults(items, query) {
+    const container = document.getElementById("results");
+    const header = document.getElementById("resultsHeader");
+
+    header.innerHTML = `
+        <span>
+            ${items.length} result${items.length === 1 ? "" : "s"} for "${escapeHTML(query)}"
+        </span>
+    `;
+
+    if (!items.length) {
+        container.innerHTML = `<div class="message">No matching records found.</div>`;
+        return;
+    }
+
+    container.innerHTML = items.map(renderCard).join("");
+}
+
+function renderCard(item) {
+    let coverHTML = "";
+    if (item.cover) {
+        coverHTML = `<img class="cover" src="${escapeHTML(item.cover)}" alt="" loading="lazy">`;
+    } else {
+        coverHTML = `<div class="no-cover">No Preview</div>`;
+    }
+
+    let locationsHTML = "";
+    const locations = item.locations || [];
+
+    if (!locations.length) {
+        locationsHTML = `<div class="location"><span class="location-name">No location data</span></div>`;
+    } else {
+        locationsHTML = locations.map(location => `
+            <div class="location">
+                <span class="location-name">${escapeHTML(location.name)}</span>
+                <span class="status ${statusClass(location.status)}">
+                    ${escapeHTML(location.status)}
+                </span>
+            </div>
+        `).join("");
+    }
+
+    const description = item.description ? `<div class="description">${escapeHTML(item.description)}</div>` : "";
+
+    return `
+        <article class="card">
+            <div class="card-top">
+                ${coverHTML}
+                <div class="card-info">
+                    <h2>${escapeHTML(item.title)}</h2>
+                    <div class="meta">
+                        ${item.publicationDate ? `Published: ${escapeHTML(item.publicationDate)}` : ""}
+                    </div>
+                    <span class="badge">${escapeHTML(item.category)}</span>
+                    ${item.copies ? `<div class="meta" style="margin-top:6px">${item.copies} total copies</div>` : ""}
+                </div>
+            </div>
+            ${description}
+            <div class="availability">
+                <div class="availability-title">Branch Availability</div>
+                ${locationsHTML}
+            </div>
+        </article>
+    `;
+}
+
+async function search() {
+    const query = document.getElementById("searchInput").value.trim();
+    const category = document.getElementById("category").value;
+
+    if (!query) return;
+
+    const results = document.getElementById("results");
+    results.innerHTML = `<div class="message"><div class="spinner"></div>Querying catalog index...</div>`;
+
+    try {
+        const response = await fetch("/api/search?q=" + encodeURIComponent(query));
+        if (!response.ok) throw new Error("Search request failed");
+
+        const data = await response.json();
+        let items = data.items;
+
+        if (category !== "All") {
+            items = items.filter(item => item.category === category);
+        }
+
+        renderResults(items, query);
+    } catch (error) {
+        results.innerHTML = `<div class="message">Search failed.<br><br>${escapeHTML(error.message)}</div>`;
+    }
+}
+
+document.getElementById("searchInput").addEventListener("keydown", event => {
+    if (event.key === "Enter") search();
+});
+</script>
+</body>
+</html>
